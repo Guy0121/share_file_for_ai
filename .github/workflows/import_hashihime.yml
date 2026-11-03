@@ -1,0 +1,32 @@
+name: Import Hashihime archive files
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch source archives and validate SHA256
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --retry-delay 2 --silent --show-error 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-40c0-81f4-b5a0-9066890672d2/raw?se=2026-11-03T07%3A17%3A44Z&sp=r&sv=2026-02-06&sr=b&scid=1366e54b-d059-5915-b508-3761f7bf35bf&skoid=b7fc319f-b93c-4fac-ba5f-14fdc3f9209f&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-11-03T06%3A29%3A11Z&ske=2026-11-04T06%3A29%3A11Z&sks=b&skv=2026-02-06&sig=g35V9ULLnRvn7TCyacJahvYtrfdP8AxKsIjxgFUywUM%3D' -o '橋姫_全32カット_パーツアニメーション_01of03.zip'
+          echo '880770af664c92107c2950e370b190825811be5e75f366379eee29b040eae11b  橋姫_全32カット_パーツアニメーション_01of03.zip' | sha256sum -c -
+          curl --fail --location --retry 3 --retry-delay 2 --silent --show-error 'https://sdmntpraustraliaeast.oaiusercontent.com/files/00000000-4320-81fa-a87e-6eb316911ab3/raw?se=2026-11-03T07%3A17%3A33Z&sp=r&sv=2026-02-06&sr=b&scid=6e66b9f3-e36a-5ada-ae71-a4ddf76c68fb&skoid=b7fc319f-b93c-4fac-ba5f-14fdc3f9209f&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-11-03T07%3A07%3A10Z&ske=2026-11-04T07%3A07%3A10Z&sks=b&skv=2026-02-06&sig=nP7v18pqM6%2BgrRgiP6WGvWhdnufpsw63B7b9CWZ72Js%3D' -o '橋姫_全32カット_パーツアニメーション_02of03.zip'
+          echo '3618a95130d45a03348e44a92fbf31f4f3a4ef608bb4e4ece0505aea9ea28de0  橋姫_全32カット_パーツアニメーション_02of03.zip' | sha256sum -c -
+          curl --fail --location --retry 3 --retry-delay 2 --silent --show-error 'https://sdmntpraustraliaeast.oaiusercontent.com/files/00000000-e0f8-81fa-835a-f5b3d450be95/raw?se=2026-11-03T07%3A17%3A32Z&sp=r&sv=2026-02-06&sr=b&scid=2ee96d1e-8c78-56a8-8228-de57dcae35b1&skoid=b7fc319f-b93c-4fac-ba5f-14fdc3f9209f&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-11-03T02%3A40%3A26Z&ske=2026-11-04T02%3A40%3A26Z&sks=b&skv=2026-02-06&sig=K67HCF184cOha2zNNvdSW8CSexKWBQvlpi829IH05wA%3D' -o '橋姫_全32カット_パーツアニメーション_03of03.zip'
+          echo 'a3dc19484e10fd2c25abcf0d8688362ce22661eb9a365671b92f2b386698a6f3  橋姫_全32カット_パーツアニメーション_03of03.zip' | sha256sum -c -
+      - name: Commit files
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- '*.zip'
+          if ! git diff --cached --quiet; then
+            git commit -m 'Add three full Hashihime animation archives'
+            git push
+          fi
